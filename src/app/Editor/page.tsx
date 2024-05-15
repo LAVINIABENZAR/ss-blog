@@ -1,17 +1,19 @@
 'use client'
 import 'tailwindcss/tailwind.css';
 import ImagesInputs from '@/components/imagesInputs';
+import { SupabaseClient, createClient } from '@supabase/supabase-js';
+
+const URL = process.env.NEXT_PUBLIC_URL || ''
+const API = process.env.NEXT_PUBLIC_API || ''
+const supabase: SupabaseClient = createClient(URL, API)
 
 function Editor() {
-
-
     return (
         <>
             <form className="bg-pink-100 p-4">
                 <div className="flex mb-4 justify-center">
                      <ImagesInputs/>
                 </div>
-                
                 <div className='flex flex-col'>
                 <div className="flex mb-4 justify-center">
                     <label className="block mb-2 mr-3 font-semibold text-lg" htmlFor="text">Title</label>
