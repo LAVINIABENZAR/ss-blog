@@ -37,7 +37,18 @@ function Editor() {
             [name]: value
         }))
     }
-    
+
+    const addIngredient = () => {
+        const ingredientInput = document.getElementById('ingredient-input') as HTMLInputElement
+        if (ingredientInput && ingredientInput.value) {
+            setArticle(prevArticle => ({
+                ...prevArticle,
+                ingredients: [...prevArticle.ingredients, ingredientInput.value]
+            }))
+            ingredientInput.value = ''
+        }
+    }
+
     return (
         <>
             <form className="bg-pink-100 p-4" onSubmit={handleSubmit}>
