@@ -92,12 +92,19 @@ function Editor() {
         createArticle()
     }
 
+    const handleImageChange = (imageKey: 'image1' | 'image2', src: string) => {
+       setArticle(prevArticle => ({
+        ...prevArticle,
+        [imageKey]: src
+       }))
+
+    }
 
     return (
         <>
             <form className="bg-pink-100 p-4" onSubmit={handleSubmit}>
                 <div className="flex mb-4 justify-center">
-                    <ImagesInputs />
+                    <ImagesInputs onImageChange={handleImageChange} images={{ image1: article.image1, image2: article.image2 }}/>
                 </div>
                 <div className='flex flex-col'>
                     <div className="flex mb-4 justify-center">

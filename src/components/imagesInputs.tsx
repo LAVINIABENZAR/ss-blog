@@ -1,23 +1,23 @@
 import 'tailwindcss/tailwind.css';
-import React, { useState, ChangeEvent } from 'react';
+import React, { useState, useEffect } from 'react';
 
-const ImagesInputs: React.FC = () => {
-    const [images, setImages] = useState<{ image1: string | null, image2: string | null }>({ image1: null, image2: null })
+interface ImagesInputsProps {
+    onImageChange: (imageKey: 'image1' | 'image2', src: string) => void;
+    images: { image1: string; image2: string };
+}
 
-
-    const handleFileInput = (event: ChangeEvent<HTMLInputElement>, imageKey: 'image1' | 'image2') => {
-        const file = event.target.files?.[0]
-
+function ImagesInputs({ onImageChange, images }: ImagesInputsProps) {
+    const handleFileInput = (event: React.ChangeEvent<HTMLInputElement>, imageKey: 'image1' | 'image2') => {
+        const file = event.target.files?.[0];
         if (file && file.type.startsWith('image/')) {
-            const reader = new FileReader()
-
+            const reader = new FileReader();
             reader.onload = function (e) {
-                const src = e.target?.result as string
-                setImages(prevImages => ({ ...prevImages, [imageKey]: src }))
-            }
-            reader.readAsDataURL(file)
+                const src = e.target?.result as string;
+                onImageChange(imageKey, src);
+            };
+            reader.readAsDataURL(file);
         }
-    }
+    };
 
     return (
         <>
@@ -42,7 +42,9 @@ const ImagesInputs: React.FC = () => {
                 <input type="file" id='file2' className='hidden' name='file2' onChange={(e) => handleFileInput(e, 'image2')} accept='image/*' />
             </div>
         </>
-    )
+    );
 }
 
-export default ImagesInputs
+export default ImagesInputs;
+
+
