@@ -64,10 +64,11 @@ function Editor() {
 
     const createArticle = async () => {
         try {
-            console.log('creating article', article)
+            const {id, ...articleWithoutId} = article
+            console.log('creating article', articleWithoutId)
             const { data, error } = await supabase
                 .from('articles')
-                .insert([article]);
+                .insert([articleWithoutId]);
             if (error) {
                 console.error('Error inserting data', error.message)
             } else {
