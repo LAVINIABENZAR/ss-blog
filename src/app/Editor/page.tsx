@@ -49,6 +49,19 @@ function Editor() {
         }
     }
 
+    
+   const AddInstruction = () => {
+    const instructionInput = document.getElementById('instruction-input') as HTMLInputElement
+    if(instructionInput && instructionInput.value) {
+        setArticle(prevArticle => ({
+            ...prevArticle,
+            instructions: [...prevArticle.instructions, instructionInput.value]
+        }))
+        instructionInput.value = ''
+    }
+   }
+
+
     return (
         <>
             <form className="bg-pink-100 p-4" onSubmit={handleSubmit}>
