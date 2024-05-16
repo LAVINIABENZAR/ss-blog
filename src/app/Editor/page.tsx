@@ -102,23 +102,23 @@ function Editor() {
                 <div className='flex flex-col'>
                     <div className="flex mb-4 justify-center">
                         <label className="block mb-2 mr-3 font-semibold text-lg" htmlFor="title">Title</label>
-                        <input className=" w-90" type="text" id='title' name='title' value={article.title} onChange={handleChange} />
+                        <input className=" w-90 border-2 border-gray-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" type="text" id='title' name='title' value={article.title} onChange={handleChange} />
                     </div>
                     <div className='text-center'>from</div>
                     <div className="flex mt-3 mb-4 justify-center">
                         <label className="block mb-2 mr-3 font-semibold text-lg" htmlFor="movie"> Movie / Book Name</label>
-                        <input type="text" id='movie' name='movie' value={article.movie} onChange={handleChange} />
+                        <input className='border-2 border-gray-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' type="text" id='movie' name='movie' value={article.movie} onChange={handleChange} />
                     </div>
                 </div>
 
                 <div className="flex flex-col mb-4 place-items-center">
                     <label className="block mb-2 mr-8 text-center font-medium mt-10 text-2xl text-gray-800" htmlFor="ingredients">INGREDIENTS :</label>
-                    <input itemID='ingredient-input' className='w-2/6' type="text" id='ingredients' name='ingredients' value={article.ingredients} onChange={handleChange} />
+                    <input itemID='ingredient-input' className='w-2/6 border-2 border-gray-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' type="text" id='ingredients' name='ingredients' value={article.ingredients} onChange={handleChange} />
                     <button type='button' onClick={addIngredient} className="bg-purple-300 w-40 text-white hover:bg-purple-200 font-bold py-2 px-4 mt-3 rounded items-center">Add Ingredient</button>
                 </div>
                 <div className="flex flex-col mb-4 place-items-center">
                     <label className="block mb-2 mr-8 text-center mt-10 font-medium text-gray-800 text-2xl" htmlFor="text">INSTRUCTIONS :</label>
-                    <input itemID='indtruction-input' className=' w-2/6' type="text" id='instructions' name='instructions' value={article.instructions} onChange={handleChange} />
+                    <input itemID='indtruction-input' className=' w-2/6 border-2 border-gray-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' type="text" id='instructions' name='instructions' value={article.instructions} onChange={handleChange} />
                     <button type='button' onClick={AddInstruction} className="bg-purple-300 w-40 text-white hover:bg-purple-200 font-bold py-2 px-4 mt-3 rounded items-center">Add Instruction</button>
                 </div>
                 <div className='flex justify-end m-9 bg-pink-100'>
