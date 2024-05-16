@@ -61,6 +61,32 @@ function Editor() {
     }
    }
 
+   
+   const createArticle = async () => {
+    try {
+        console.log('creating article', article)
+        const { data, error} = await supabase
+        .from('articles')
+        .insert([article]);
+     if (error) {
+         console.error('Error inserting data', error.message)
+     } else {
+         console.log('Data inserted successfuly', data)
+         setArticle({
+             id: 0,
+             image1: '',
+             image2: '',
+             title: '',
+             movie: '',
+             ingredients: [],
+             instructions: []
+         })
+     }
+ } catch (error: unknown) {
+     console.error('Error', error as Error)
+ }
+}
+
 
     return (
         <>
