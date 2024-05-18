@@ -16,6 +16,7 @@ interface Articles {
     movie: string;
     ingredients: string[];
     instructions: string[];
+    description: string
 }
 
 function Editor() {
@@ -26,13 +27,14 @@ function Editor() {
         title: '',
         movie: '',
         ingredients: [],
-        instructions: []
+        instructions: [],
+        description: ''
     });
 
     const [ingredientInputs, setIngredientInputs] = useState<string[]>(['']);
     const [instructionInputs, setInstructionInputs] = useState<string[]>(['']);
 
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = event.target;
         setArticle(prevArticle => ({
             ...prevArticle,
@@ -102,7 +104,8 @@ function Editor() {
                     title: '',
                     movie: '',
                     ingredients: [],
-                    instructions: []
+                    instructions: [],
+                    description: ''
                 });
                 setIngredientInputs(['']);
                 setInstructionInputs(['']);
@@ -127,6 +130,10 @@ function Editor() {
     return (
         <>
             <form className="bg-pink-100 p-4" onSubmit={handleSubmit}>
+                <section className='flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100'>
+                    <label htmlFor="description">Description</label>
+                    <textarea className="w-90 border-2 border-gray-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent h-44 w-5/12" name="description" id="description" value={article.description} onChange={handleChange}></textarea>
+                </section>
                 <div className="flex mb-4 justify-center">
                     <ImagesInputs onImageChange={handleImageChange} images={{ image1: article.image1, image2: article.image2 }} />
                 </div>
@@ -147,7 +154,7 @@ function Editor() {
                     {ingredientInputs.map((input, index) => (
                         <div key={index} className="mb-2">
                             <input
-                                className=' border-2 border-gray-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+                                className='w-full border-2 border-gray-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
                                 type="text"
                                 value={input}
                                 onChange={(e) => handleIngredientChange(index, e.target.value)}
