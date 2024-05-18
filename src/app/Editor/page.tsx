@@ -130,7 +130,7 @@ function Editor() {
     return (
         <>
             <form className="bg-pink-100 p-4" onSubmit={handleSubmit}>
-                <section className='flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100'>
+                <section className='flex flex-col items-center justify-center mb-3'>
                     <label htmlFor="description">Description</label>
                     <textarea className="w-90 border-2 border-gray-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent h-44 w-5/12" name="description" id="description" value={article.description} onChange={handleChange}></textarea>
                 </section>
