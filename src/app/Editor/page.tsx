@@ -1,38 +1,38 @@
 'use client'
 import 'tailwindcss/tailwind.css';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import ImagesInputs from '@/components/imagesInputs';
-import { SupabaseClient, createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-const URL = process.env.NEXT_PUBLIC_URL || ''
-const API = process.env.NEXT_PUBLIC_API || ''
-const supabase: SupabaseClient = createClient(URL, API)
+const URL = process.env.NEXT_PUBLIC_URL || '';
+const API = process.env.NEXT_PUBLIC_API || '';
+const supabase: SupabaseClient = createClient(URL, API);
 
 interface Articles {
     id: number;
     image1: string;
-    image2: string;
     title: string;
     movie: string;
     ingredients: string[];
-    instructions: string[];
-    description: string
+    instructions: { text: string, image: string }[];
+    description: string;
 }
 
-function Editor() {
+const Editor: React.FC = () => {
     const [article, setArticle] = useState<Articles>({
         id: 0,
         image1: '',
-        image2: '',
         title: '',
         movie: '',
         ingredients: [],
-        instructions: [],
+        instructions: [{ text: '', image: '' }],
         description: ''
     });
 
     const [ingredientInputs, setIngredientInputs] = useState<string[]>(['']);
-    const [instructionInputs, setInstructionInputs] = useState<string[]>(['']);
+    const [instructionInputs, setInstructionInputs] = useState<{ text: string, image: string }[]>([{ text: '', image: '' }]);
+
+    const [images, setImages] = useState<{ [key: string]: string }>({ image1: '' });
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = event.target;
@@ -48,10 +48,25 @@ function Editor() {
         setIngredientInputs(newIngredientInputs);
     };
 
-    const handleInstructionChange = (index: number, value: string) => {
+    const handleInstructionChange = (index: number, key: 'text' | 'image', value: string) => {
         const newInstructionInputs = [...instructionInputs];
-        newInstructionInputs[index] = value;
+        newInstructionInputs[index] = {
+            ...newInstructionInputs[index],
+            [key]: value
+        };
         setInstructionInputs(newInstructionInputs);
+    };
+
+    const handleInstructionImageChange = (index: number, event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (file && file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const src = e.target?.result as string;
+                handleInstructionChange(index, 'image', src);
+            };
+            reader.readAsDataURL(file);
+        }
     };
 
     const addIngredientInput = () => {
@@ -59,7 +74,7 @@ function Editor() {
     };
 
     const addInstructionInput = () => {
-        setInstructionInputs([...instructionInputs, '']);
+        setInstructionInputs([...instructionInputs, {text: '', image: ''}]);
     };
 
     const saveIngredients = () => {
@@ -72,21 +87,20 @@ function Editor() {
     const saveInstructions = () => {
         setArticle(prevArticle => ({
             ...prevArticle,
-            instructions: instructionInputs.filter(input => input.trim() !== '')
+            instructions: instructionInputs.filter(input => input.text.trim() !== '' || input.image.trim() !== '')
         }));
     };
 
     const createArticle = async () => {
         saveIngredients();
         saveInstructions();
-
-        // Using the latest state values
+    
         const latestArticle = {
             ...article,
             ingredients: ingredientInputs.filter(input => input.trim() !== ''),
-            instructions: instructionInputs.filter(input => input.trim() !== '')
+            instructions: instructionInputs.filter(input => input.text.trim() !== '' || input.image.trim() !== '')
         };
-
+    
         try {
             const { id, ...articleWithoutId } = latestArticle;
             console.log('creating article', articleWithoutId);
@@ -100,27 +114,32 @@ function Editor() {
                 setArticle({
                     id: 0,
                     image1: '',
-                    image2: '',
                     title: '',
                     movie: '',
                     ingredients: [],
-                    instructions: [],
+                    instructions: [{ text: '', image: '' }],
                     description: ''
                 });
                 setIngredientInputs(['']);
-                setInstructionInputs(['']);
+                setInstructionInputs([{ text: '', image: '' }]);
+                setImages({ image1: '' });
             }
         } catch (error: unknown) {
             console.error('Error', error as Error);
         }
     };
+    
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         createArticle();
     };
 
-    const handleImageChange = (imageKey: 'image1' | 'image2', src: string) => {
+    const handleImageChange = (imageKey: string, src: string) => {
+        setImages(prevImages => ({
+            ...prevImages,
+            [imageKey]: src
+        }));
         setArticle(prevArticle => ({
             ...prevArticle,
             [imageKey]: src
@@ -130,13 +149,6 @@ function Editor() {
     return (
         <>
             <form className="bg-pink-100 p-4" onSubmit={handleSubmit}>
-                <section className='flex flex-col items-center justify-center mb-3'>
-                    <label htmlFor="description">Description</label>
-                    <textarea className="w-90 border-2 border-gray-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent h-44 w-5/12" name="description" id="description" value={article.description} onChange={handleChange}></textarea>
-                </section>
-                <div className="flex mb-4 justify-center">
-                    <ImagesInputs onImageChange={handleImageChange} images={{ image1: article.image1, image2: article.image2 }} />
-                </div>
                 <div className='flex flex-col'>
                     <div className="flex mb-4 justify-center">
                         <label className="block mb-2 mr-3 font-semibold text-lg" htmlFor="title">Title</label>
@@ -148,13 +160,18 @@ function Editor() {
                         <input className='border-2 border-gray-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent' type="text" id='movie' name='movie' value={article.movie} onChange={handleChange} />
                     </div>
                 </div>
-
+                <section className='flex flex-col items-center justify-center mb-3'>
+                    <label htmlFor="description">Description</label>
+                    <textarea className="w-90 border-2 border-gray-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent h-44 w-5/12" name="description" id="description" value={article.description} onChange={handleChange}></textarea>
+                </section>
+                <ImagesInputs onImageChange={handleImageChange} images={images} />
+    
                 <div className="flex flex-col mb-4 place-items-center">
                     <label className="block mb-2 mr-8 text-center font-medium mt-10 text-2xl text-gray-800" htmlFor="ingredients">INGREDIENTS :</label>
                     {ingredientInputs.map((input, index) => (
                         <div key={index} className="mb-2">
                             <input
-                                className='w-full border-2 border-gray-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+                                className='border-2 w-full border-gray-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
                                 type="text"
                                 value={input}
                                 onChange={(e) => handleIngredientChange(index, e.target.value)}
@@ -163,8 +180,7 @@ function Editor() {
                     ))}
                     <button type='button' onClick={addIngredientInput} className="bg-purple-300 w-40 text-white hover:bg-purple-200 font-bold py-2 px-4 mt-3 rounded items-center">Add Ingredient</button>
                 </div>
-                
-
+    
                 <div className="flex flex-col mb-4 place-items-center">
                     <label className="block mb-2 mr-8 text-center mt-10 font-medium text-gray-800 text-2xl" htmlFor="instructions">INSTRUCTIONS :</label>
                     {instructionInputs.map((input, index) => (
@@ -172,23 +188,28 @@ function Editor() {
                             <input
                                 className='border-2 border-gray-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
                                 type="text"
-                                value={input}
-                                onChange={(e) => handleInstructionChange(index, e.target.value)}
+                                value={input.text}
+                                onChange={(e) => handleInstructionChange(index, 'text', e.target.value)}
                             />
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onChange={(e) => handleInstructionImageChange(index, e)}
+                                className='border-2 border-gray-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+                            />
+                            {input.image && <img src={input.image} alt={`instruction-${index}`} className="mt-2" />}
                         </div>
                     ))}
                     <button type='button' onClick={addInstructionInput} className="bg-purple-300 w-40 text-white hover:bg-purple-200 font-bold py-2 px-4 mt-3 rounded items-center">Add Instruction</button>
                 </div>
-
+    
                 <div className='flex justify-end m-9 bg-pink-100'>
                     <button type='submit' className='bg-gray-500 w-1/5 text-white hover:bg-purple-600 font-bold py-2 px-4 mt-3 border-white rounded-xl'>Post</button>
                 </div>
             </form>
         </>
     );
-}
+    
+};
 
 export default Editor;
-
-
-
