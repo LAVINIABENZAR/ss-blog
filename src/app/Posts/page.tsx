@@ -46,6 +46,11 @@ export default function Posts() {
                     {post.description}
                 </section>
                 <img src={post.image1} alt="image"/>
+                <ul>
+                  {post.ingredients.map((ingredient) => (
+                    <li>{ingredient}</li>
+                  ))}
+                </ul>
             </div>
         ))}
         </>
