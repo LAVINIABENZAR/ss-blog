@@ -51,6 +51,11 @@ export default function Posts() {
                     <li>{ingredient}</li>
                   ))}
                 </ul>
+                <ul>
+                    {post.instructions.map((instruction) => (
+                        <li>{instruction}</li>
+                    ))}
+                </ul>
             </div>
         ))}
         </>
