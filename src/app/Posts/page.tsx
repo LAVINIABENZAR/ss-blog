@@ -13,7 +13,7 @@ interface Posts {
     title: string;
     movie: string;
     ingredients: string[];
-    instructions: string[];
+    instructions: { text: string, image: string }[];
     description: string
 }
 
@@ -45,15 +45,20 @@ export default function Posts() {
                 <section>
                     {post.description}
                 </section>
-                <img src={post.image1} alt="image"/>
+                <img src={post.image1} alt="image" width={200}/>
+                <h3>Ingredients:</h3>
                 <ul>
                   {post.ingredients.map((ingredient) => (
                     <li>{ingredient}</li>
                   ))}
                 </ul>
+                <h3>Instructions</h3>
                 <ul>
                     {post.instructions.map((instruction) => (
-                        <li>{instruction}</li>
+                        <>
+                        <li>{instruction.text}</li>
+                        <img src={instruction.image} width={200}  />
+                        </>
                     ))}
                 </ul>
             </div>
