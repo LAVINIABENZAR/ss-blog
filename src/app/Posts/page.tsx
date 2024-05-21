@@ -20,6 +20,17 @@ interface Posts {
 export default function Posts() {
     const [posts, setPosts] = useState<Posts[]>([])
 
+    useEffect(() => {
+        getPosts()
+    }, [])
+
+    async function getPosts() {
+        const {data}: PostgrestResponse<Posts> = await supabase
+         .from('articles')
+         .select()
+         setPosts(data || [])
+    } 
+
     return(
         <>
         </>
