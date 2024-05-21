@@ -33,6 +33,21 @@ export default function Posts() {
 
     return(
         <>
+        {posts.map((post) => (
+            <div>
+                <h2>
+                    {post.title}
+                </h2>
+                <span>from</span>
+                <h3>
+                    {post.movie}
+                </h3>
+                <section>
+                    {post.description}
+                </section>
+                <img src={post.image1} alt="image"/>
+            </div>
+        ))}
         </>
     )
 }
