@@ -2,12 +2,8 @@
 import 'tailwindcss/tailwind.css';
 import React, { useState } from 'react';
 import ImagesInputs from '@/components/imagesInputs';
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
-
-const URL = process.env.NEXT_PUBLIC_URL || '';
-const API = process.env.NEXT_PUBLIC_API || '';
-const supabase: SupabaseClient = createClient(URL, API);
-
+import { supabase } from '@/utils/supabase';
+// interfaces //
 interface Articles {
     id: number;
     image1: string;
@@ -29,19 +25,13 @@ const Editor: React.FC = () => {
         description: ''
     });
 
+    // state //
     const [ingredientInputs, setIngredientInputs] = useState<string[]>(['']);
     const [instructionInputs, setInstructionInputs] = useState<{ text: string, image: string }[]>([{ text: '', image: '' }]);
-
     const [images, setImages] = useState<{ [key: string]: string }>({ image1: '' });
 
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { name, value } = event.target;
-        setArticle(prevArticle => ({
-            ...prevArticle,
-            [name]: value
-        }));
-    };
 
+    // handle ingredients and instructions //
     const handleIngredientChange = (index: number, value: string) => {
         const newIngredientInputs = [...ingredientInputs];
         newIngredientInputs[index] = value;
@@ -56,7 +46,7 @@ const Editor: React.FC = () => {
         };
         setInstructionInputs(newInstructionInputs);
     };
-
+    
     const handleInstructionImageChange = (index: number, event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (file && file.type.startsWith('image/')) {
@@ -76,25 +66,26 @@ const Editor: React.FC = () => {
     const addInstructionInput = () => {
         setInstructionInputs([...instructionInputs, {text: '', image: ''}]);
     };
-
+    
     const saveIngredients = () => {
         setArticle(prevArticle => ({
             ...prevArticle,
             ingredients: ingredientInputs.filter(input => input.trim() !== '')
         }));
     };
-
+    
     const saveInstructions = () => {
         setArticle(prevArticle => ({
             ...prevArticle,
             instructions: instructionInputs.filter(input => input.text.trim() !== '' || input.image.trim() !== '')
         }));
     };
-
+    
+    // create article function //
     const createArticle = async () => {
         saveIngredients();
         saveInstructions();
-    
+        
         const latestArticle = {
             ...article,
             ingredients: ingredientInputs.filter(input => input.trim() !== ''),
@@ -105,8 +96,8 @@ const Editor: React.FC = () => {
             const { id, ...articleWithoutId } = latestArticle;
             console.log('creating article', articleWithoutId);
             const { data, error } = await supabase
-                .from('articles')
-                .insert([articleWithoutId]);
+            .from('articles')
+            .insert([articleWithoutId]);
             if (error) {
                 console.error('Error inserting data', error.message);
             } else {
@@ -128,8 +119,16 @@ const Editor: React.FC = () => {
             console.error('Error', error as Error);
         }
     };
-    
 
+    // handle events //
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const { name, value } = event.target;
+        setArticle(prevArticle => ({
+            ...prevArticle,
+            [name]: value
+        }));
+    };
+    
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         createArticle();
@@ -186,7 +185,7 @@ const Editor: React.FC = () => {
                     {instructionInputs.map((input, index) => (
                         <div key={index} className="mb-2">
                             <input
-                                className='border-2 border-gray-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+                                className=' border-2 w-60 border-gray-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
                                 type="text"
                                 value={input.text}
                                 onChange={(e) => handleInstructionChange(index, 'text', e.target.value)}
@@ -197,7 +196,7 @@ const Editor: React.FC = () => {
                                 onChange={(e) => handleInstructionImageChange(index, e)}
                                 className='border-2 border-gray-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
                             />
-                            {input.image && <img src={input.image} alt={`instruction-${index}`} className="mt-2" />}
+                            {input.image && <img width={300} src={input.image} alt={`instruction-${index}`} className="mt-2" />}
                         </div>
                     ))}
                     <button type='button' onClick={addInstructionInput} className="bg-purple-300 w-40 text-white hover:bg-purple-200 font-bold py-2 px-4 mt-3 rounded items-center">Add Instruction</button>

@@ -1,10 +1,7 @@
 'use client'
 import React, { useEffect, useState } from "react";
-import { PostgrestResponse, createClient } from "@supabase/supabase-js";
-
-const URL = process.env.NEXT_PUBLIC_URL || ''
-const API = process.env.NEXT_PUBLIC_API || ''
-const supabase = createClient(URL, API)
+import { PostgrestResponse } from "@supabase/supabase-js";
+import { supabase } from "@/utils/supabase";
 
 interface Posts {
     id: number,
