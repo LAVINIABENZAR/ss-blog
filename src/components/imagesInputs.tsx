@@ -20,13 +20,13 @@ const ImagesInputs: React.FC<ImagesInputsProps> = ({ onImageChange, images }) =>
     };
 
     return (
-        <div className="flex flex-wrap gap-4">
+        <div className="flex justify-center flex-wrap gap-4">
             {Object.keys(images).map(imageKey => (
                 <div key={imageKey} className='flex flex-col items-center justify-center w-fit h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100'>
                     {images[imageKey] ? (
                         <img className='w-full h-full object-contain' src={images[imageKey]} alt={imageKey} />
                     ) : (
-                        <label htmlFor={imageKey} className='flex flex-col items-center justify-center w-full h-full cursor-pointer'>
+                        <label htmlFor={imageKey} className='flex flex-col items-center justify-center p-52 cursor-pointer'>
                             <span>Upload {imageKey}</span>
                         </label>
                     )}
