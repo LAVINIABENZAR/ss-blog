@@ -3,19 +3,20 @@ import 'tailwindcss/tailwind.css';
 import React, { useState } from 'react';
 import ImagesInputs from '@/components/imagesInputs';
 import { supabase } from '@/utils/supabase';
-// interfaces //
-interface Articles {
-    id: number;
-    image1: string;
-    title: string;
-    movie: string;
-    ingredients: string[];
-    instructions: { text: string, image: string }[];
-    description: string;
-}
+import { Post } from '@/utils/postInterface';
+// // interfaces //
+// interface Articles {
+//     id: number;
+//     image1: string;
+//     title: string;
+//     movie: string;
+//     ingredients: string[];
+//     instructions: { text: string, image: string }[];
+//     description: string;
+// }
 
 const Editor: React.FC = () => {
-    const [article, setArticle] = useState<Articles>({
+    const [article, setArticle] = useState<Post>({
         id: 0,
         image1: '',
         title: '',
