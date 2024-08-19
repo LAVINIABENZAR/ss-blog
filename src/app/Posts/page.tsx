@@ -1,5 +1,6 @@
 'use client'
 import React from "react";
+import type { GetStaticProps } from "next";
 import 'tailwindcss/tailwind.css';
 import { getPosts } from "@/utils/getPosts";
 import { useState, useEffect } from "react";
@@ -7,12 +8,14 @@ import { Post } from "@/utils/postInterface";
 import Link from "next/link";
 
 
+
+
 const Posts = ({params}: {params: {PostsID: string}}) => {
    
     const [posts, setPosts] = useState<Post[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
 
-  
+  const {PostsID} = params
     const fetchPosts = async () => {
       try {
         const data = await getPosts();
@@ -26,7 +29,7 @@ const Posts = ({params}: {params: {PostsID: string}}) => {
 
     useEffect(() => {
         fetchPosts();
-      }, []);
+      }, [PostsID]);
     
       if (loading) {
         return <div>Loading...</div>;
@@ -49,5 +52,14 @@ const Posts = ({params}: {params: {PostsID: string}}) => {
       );
 
   };
+
+  export async function GetStaticProps() {
+    const posts = await getPosts()
+   return {
+    props: {
+       posts
+    }
+   }
+  }
   
   export default Posts;
