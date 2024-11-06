@@ -5,15 +5,15 @@ import ImagesInputs from '@/components/imagesInputs';
 import { supabase } from '@/utils/supabase';
 import { Post } from '@/utils/postInterface';
 // // interfaces //
-// interface Articles {
-//     id: number;
-//     image1: string;
-//     title: string;
-//     movie: string;
-//     ingredients: string[];
-//     instructions: { text: string, image: string }[];
-//     description: string;
-// }
+interface Articles {
+    id: number;
+    image1: string;
+    title: string;
+    movie: string;
+    ingredients: string[];
+    instructions: { text: string, image: string }[];
+    description: string;
+}
 
 const Editor: React.FC = () => {
     const [article, setArticle] = useState<Post>({
